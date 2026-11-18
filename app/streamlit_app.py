@@ -34,11 +34,21 @@ def load_saathi() -> Saathi:
     return saathi
 
 
-try:
-    saathi = load_saathi()
-except ValueError as err:  # usually a missing GEMINI_API_KEY
-    st.error(f"Setup problem: {err}")
+def safe(fn, *args):
+    """Run a Gemini-backed call and show a clean message instead of a traceback."""
+    try:
+        return fn(*args)
+    except ValueError as err:  # missing GEMINI_API_KEY, or a scanned PDF with no text
+        st.error(str(err))
+    except Exception as err:
+        if getattr(err, "code", None) in (429, 503):
+            st.warning("Gemini is busy right now (too many requests). Please try again in a minute.")
+        else:
+            st.error(f"Something went wrong ({type(err).__name__}). Please try again.")
     st.stop()
+
+
+saathi = safe(load_saathi)
 
 st.title("Sarkari Saathi")
 st.caption("Ask anything about a government job notification. Answers come with page numbers so you can verify.")
@@ -51,11 +61,8 @@ with st.sidebar:
             with tempfile.TemporaryDirectory() as tmp:
                 path = Path(tmp) / uploaded.name
                 path.write_bytes(uploaded.getvalue())
-                try:
-                    new_id = saathi.ingest(path)
-                    st.success(f"Indexed: {new_id}")
-                except ValueError as err:
-                    st.error(str(err))
+                new_id = safe(saathi.ingest, path)
+                st.success(f"Indexed: {new_id}")
 
     docs = saathi.documents()
     doc_id = st.selectbox("Choose notification", docs) if docs else None
@@ -70,7 +77,7 @@ with tab_ask:
     question = st.text_input("Your question (English / हिंदी / मराठी)", placeholder="What is the age limit for Technical Assistant?")
     if st.button("Ask", type="primary") and question.strip():
         with st.spinner("Searching the notification..."):
-            ans = saathi.ask(question, doc_id)
+            ans = safe(saathi.ask, question, doc_id)
         st.markdown(ans.text)
         if ans.found and ans.cited_pages:
             st.caption("Pages: " + ", ".join(str(p) for p in ans.cited_pages))
@@ -82,7 +89,7 @@ with tab_ask:
 with tab_details:
     if st.button("Extract key details"):
         with st.spinner("Reading the whole notification..."):
-            st.session_state["details"] = saathi.details(doc_id)
+            st.session_state["details"] = safe(saathi.details, doc_id)
     details = st.session_state.get("details")
     if details:
         c1, c2, c3 = st.columns(3)
@@ -105,7 +112,7 @@ with tab_elig:
             qualifications=[q.strip() for q in quals.splitlines() if q.strip()],
         )
         with st.spinner("Checking..."):
-            results = saathi.eligibility(doc_id, profile)
+            results = safe(saathi.eligibility, doc_id, profile)
         icons = {"eligible": "✅", "not_eligible": "❌", "check_manually": "⚠️"}
         for r in results:
             st.markdown(f"{icons[r.status]} **{r.post}** — {r.status.replace('_', ' ')}")
