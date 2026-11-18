@@ -33,3 +33,35 @@ def test_batches_and_task_types():
     emb.embed(["a", "b", "c"])
     emb.embed_query(["q"])
     assert emb.client.models.calls == [(2, "RETRIEVAL_DOCUMENT"), (1, "RETRIEVAL_DOCUMENT"), (1, "RETRIEVAL_QUERY")]
+
+
+def test_retry_on_overload_then_success():
+    from saathi.llm import with_retry
+
+    class Busy(Exception):
+        code = 503
+
+    calls, waits = [], []
+
+    def flaky():
+        calls.append(1)
+        if len(calls) < 3:
+            raise Busy()
+        return "ok"
+
+    assert with_retry(flaky, sleep=waits.append) == "ok"
+    assert waits == [2.0, 4.0]
+
+
+def test_no_retry_on_bad_request():
+    import pytest
+
+    from saathi.llm import with_retry
+
+    class BadKey(Exception):
+        code = 400
+
+    waits = []
+    with pytest.raises(BadKey):
+        with_retry(lambda: (_ for _ in ()).throw(BadKey()), sleep=waits.append)
+    assert waits == []
