@@ -3,6 +3,7 @@
     streamlit run app/streamlit_app.py
 """
 
+import logging
 import sys
 import tempfile
 from datetime import date
@@ -14,6 +15,8 @@ sys.path.append(str(Path(__file__).resolve().parent.parent))
 
 from saathi.pipeline import Saathi  # noqa: E402
 from saathi.schemas import UserProfile  # noqa: E402
+
+logging.basicConfig(level=logging.INFO)
 
 st.set_page_config(page_title="Sarkari Saathi", page_icon="📄", layout="wide")
 
@@ -41,7 +44,7 @@ def safe(fn, *args):
     except ValueError as err:  # missing GEMINI_API_KEY, or a scanned PDF with no text
         st.error(str(err))
     except Exception as err:
-        if getattr(err, "code", None) in (429, 503):
+        if getattr(err, "code", None) in (429, 500, 503, 504) or "Timeout" in type(err).__name__:
             st.warning("Gemini is busy right now (too many requests). Please try again in a minute.")
         else:
             st.error(f"Something went wrong ({type(err).__name__}). Please try again.")
