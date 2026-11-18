@@ -1,5 +1,11 @@
+import logging
 import time
 from typing import Protocol
+
+log = logging.getLogger(__name__)
+
+# seconds to wait for one Gemini response before giving up and retrying
+TIMEOUT_S = 30
 
 
 class LLM(Protocol):
@@ -14,7 +20,7 @@ class GeminiLLM:
         from google.genai import types
 
         self._types = types
-        self.client = genai.Client(api_key=api_key)
+        self.client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=TIMEOUT_S * 1000))
         self.model = model
         self.temperature = temperature
 
@@ -33,8 +39,12 @@ class GeminiLLM:
 RETRYABLE = {429, 500, 502, 503, 504}
 
 
-def with_retry(call, attempts: int = 4, base_delay: float = 2.0, sleep=time.sleep):
-    """Retry rate-limit / overload errors with exponential backoff (2s, 4s, 8s).
+def _retryable(err: Exception) -> bool:
+    return getattr(err, "code", None) in RETRYABLE or "Timeout" in type(err).__name__
+
+
+def with_retry(call, attempts: int = 3, base_delay: float = 2.0, sleep=time.sleep):
+    """Retry rate-limit / overload / timeout errors with backoff (2s, then 4s).
 
     Gemini returns 503 "high demand" now and then on the free tier; one
     retry usually fixes it. Anything else (bad key, bad request) fails fast.
@@ -43,10 +53,11 @@ def with_retry(call, attempts: int = 4, base_delay: float = 2.0, sleep=time.slee
         try:
             return call()
         except Exception as err:  # google.genai.errors.APIError has .code
-            code = getattr(err, "code", None)
-            if code not in RETRYABLE or attempt == attempts - 1:
+            if not _retryable(err) or attempt == attempts - 1:
                 raise
-            sleep(base_delay * 2 ** attempt)
+            delay = base_delay * 2 ** attempt
+            log.warning("Gemini call failed (%s), retry %d in %.0fs", type(err).__name__, attempt + 1, delay)
+            sleep(delay)
 
 
 class FakeLLM:

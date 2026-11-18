@@ -4,7 +4,7 @@ from typing import Protocol
 
 import numpy as np
 
-from .llm import with_retry
+from .llm import TIMEOUT_S, with_retry
 
 
 class Embedder(Protocol):
@@ -41,7 +41,7 @@ class GeminiEmbedder:
         from google.genai import types
 
         self._types = types
-        self.client = genai.Client(api_key=api_key)
+        self.client = genai.Client(api_key=api_key, http_options=types.HttpOptions(timeout=TIMEOUT_S * 1000))
         self.model = model
         self.dim = dim
 
