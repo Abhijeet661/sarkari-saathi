@@ -2,6 +2,8 @@
 
 [![tests](https://github.com/Abhijeet661/sarkari-saathi/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhijeet661/sarkari-saathi/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
 
+**Live demo:** [sarkari-saathi.streamlit.app](https://sarkari-saathi.streamlit.app) (a fictional sample notification is preloaded; upload your own PDF from the sidebar)
+
 Ask questions about Indian government job notifications and get answers with the exact page number, check your eligibility, and pull the key details out as clean JSON.
 
 ## Why I built this
@@ -103,6 +105,10 @@ Offline run (hash embedder, k=3): hit@3 94%, MRR 0.82. The one miss is q14 ("Whe
 
 I care most about `refusal_correct`. From my LLM evaluation work, the most harmful failure is a confident wrong answer, like inventing a salary that isn't in the notification.
 
+## Deployment
+
+The live demo runs on Streamlit Community Cloud. Its free tier has about 1 GB of memory, which is not enough for torch plus a local embedding model, so the cloud build uses Gemini embeddings (`gemini-embedding-001`) instead. `app/requirements.txt` is the light dependency list for that build, and `EMBEDDING_PROVIDER=auto` picks local sentence-transformers when installed and Gemini otherwise. Gemini calls have a 30s timeout and retry twice on 429/5xx/timeouts, and the UI shows a short "busy, try again" message instead of a stack trace.
+
 ## Tests
 
 ```bash
@@ -125,7 +131,7 @@ Tests use a fake LLM and a hash embedder, so they run in under a second with no 
 - [ ] table-aware parsing (pdfplumber / camelot)
 - [ ] build an eval set from 10 real notifications
 - [ ] reranker (cross-encoder) after hybrid retrieval
-- [ ] deploy on Hugging Face Spaces
+- [x] deploy a live demo (Streamlit Community Cloud)
 
 ## License
 
