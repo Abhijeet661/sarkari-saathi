@@ -53,6 +53,24 @@ def test_retry_on_overload_then_success():
     assert waits == [2.0, 4.0]
 
 
+def test_retry_on_timeout():
+    from saathi.llm import with_retry
+
+    class ReadTimeout(Exception):
+        pass
+
+    calls, waits = [], []
+
+    def slow_then_ok():
+        calls.append(1)
+        if len(calls) == 1:
+            raise ReadTimeout()
+        return "ok"
+
+    assert with_retry(slow_then_ok, sleep=waits.append) == "ok"
+    assert waits == [2.0]
+
+
 def test_no_retry_on_bad_request():
     import pytest
 
