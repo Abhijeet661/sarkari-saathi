@@ -1,0 +1,20 @@
+{"id": "q01", "question": "What is the last date to apply?", "expected_pages": [1], "must_include": ["31 December 2026"], "answerable": true}
+{"id": "q02", "question": "How many vacancies are there for Technical Assistant?", "expected_pages": [2], "must_include": ["12"], "answerable": true}
+{"id": "q03", "question": "What qualification is needed for Junior Engineer Electrical?", "expected_pages": [2], "must_include": ["Diploma"], "answerable": true}
+{"id": "q04", "question": "What is the upper age limit for Data Entry Operator?", "expected_pages": [3], "must_include": ["27"], "answerable": true}
+{"id": "q05", "question": "How much age relaxation do OBC candidates get?", "expected_pages": [3], "must_include": ["3"], "answerable": true}
+{"id": "q06", "question": "On which date is age calculated?", "expected_pages": [3], "must_include": ["31 December 2026"], "answerable": true}
+{"id": "q07", "question": "What is the application fee for general candidates?", "expected_pages": [4], "must_include": ["500"], "answerable": true}
+{"id": "q08", "question": "Do women candidates have to pay the fee?", "expected_pages": [4], "must_include": ["exempt"], "answerable": true}
+{"id": "q09", "question": "What is the selection process?", "expected_pages": [5], "must_include": ["Computer Based Test", "Skill Test"], "answerable": true}
+{"id": "q10", "question": "What is the pay level of Data Entry Operator?", "expected_pages": [2], "must_include": ["Level 4"], "answerable": true}
+{"id": "q11", "question": "What is the advertisement number?", "expected_pages": [1], "must_include": ["NIRT/REC/07/2026"], "answerable": true}
+{"id": "q12", "question": "How many Technical Assistant posts are reserved for OBC?", "expected_pages": [2], "must_include": ["3"], "answerable": true}
+{"id": "q13", "question": "Can I send the application form by post?", "expected_pages": [4], "must_include": ["not"], "answerable": true}
+{"id": "q14", "question": "When will the CBT exam be held?", "expected_pages": [1], "must_include": ["February 2027"], "answerable": true}
+{"id": "q15", "question": "Technical Assistant के लिए अधिकतम आयु सीमा क्या है?", "expected_pages": [3], "must_include": ["30"], "answerable": true}
+{"id": "q16", "question": "अर्ज करण्याची शेवटची तारीख कोणती आहे?", "expected_pages": [1], "must_include": ["31"], "answerable": true}
+{"id": "q17", "question": "What is the monthly salary in rupees for Technical Assistant?", "expected_pages": [], "must_include": [], "answerable": false}
+{"id": "q18", "question": "Is there a negative marking in the CBT?", "expected_pages": [], "must_include": [], "answerable": false}
+{"id": "q19", "question": "Where is the exam centre in Pune?", "expected_pages": [], "must_include": [], "answerable": false}
+{"id": "q20", "question": "Who won the 2026 cricket world cup?", "expected_pages": [], "must_include": [], "answerable": false}
