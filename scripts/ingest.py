@@ -8,7 +8,7 @@ import logging
 from pathlib import Path
 
 from saathi.config import settings
-from saathi.embeddings import SentenceTransformerEmbedder
+from saathi.embeddings import make_embedder
 from saathi.pipeline import Saathi
 
 
@@ -23,7 +23,8 @@ def main():
     if not pdfs:
         raise SystemExit(f"No PDFs found in {path}")
 
-    saathi = Saathi(SentenceTransformerEmbedder(settings.embedding_model), llm=None)
+    embedder = make_embedder(settings.embedding_provider, settings.embedding_model, settings.gemini_api_key)
+    saathi = Saathi(embedder, llm=None)
     for pdf in pdfs:
         try:
             print(pdf.name, "->", saathi.ingest(pdf))
