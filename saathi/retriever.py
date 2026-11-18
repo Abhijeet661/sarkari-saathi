@@ -40,7 +40,9 @@ class HybridRetriever:
         if not pool:
             return []
 
-        qvec = self.embedder.embed([query])[0]
+        # some embedders (Gemini) use a different mode for queries than for documents
+        embed_query = getattr(self.embedder, "embed_query", self.embedder.embed)
+        qvec = embed_query([query])[0]
         vector_hits = self.store.search(qvec, k=self.candidates, doc_id=doc_id)
         vector_ids = [c.id for c, _ in vector_hits]
 

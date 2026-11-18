@@ -13,6 +13,8 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 class Settings:
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
     gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    # "local" (sentence-transformers), "gemini" (API) or "auto"
+    embedding_provider: str = os.getenv("EMBEDDING_PROVIDER", "auto")
     # multilingual model so Hindi / Marathi questions still match English text
     embedding_model: str = os.getenv(
         "EMBEDDING_MODEL", "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2"

@@ -38,11 +38,11 @@ class Saathi:
 
     @classmethod
     def from_settings(cls) -> "Saathi":
-        from .embeddings import SentenceTransformerEmbedder
+        from .embeddings import make_embedder
         from .llm import GeminiLLM
 
         return cls(
-            embedder=SentenceTransformerEmbedder(settings.embedding_model),
+            embedder=make_embedder(settings.embedding_provider, settings.embedding_model, settings.gemini_api_key),
             llm=GeminiLLM(settings.gemini_api_key, settings.gemini_model),
         )
 
