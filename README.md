@@ -1,5 +1,7 @@
 # Sarkari Saathi
 
+[![tests](https://github.com/Abhijeet661/sarkari-saathi/actions/workflows/ci.yml/badge.svg)](https://github.com/Abhijeet661/sarkari-saathi/actions/workflows/ci.yml) ![Python](https://img.shields.io/badge/python-3.11%2B-blue) ![License: MIT](https://img.shields.io/badge/license-MIT-green)
+
 Ask questions about Indian government job notifications and get answers with the exact page number, check your eligibility, and pull the key details out as clean JSON.
 
 ## Why I built this
