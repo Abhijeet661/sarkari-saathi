@@ -1,0 +1,9 @@
+# Used by Streamlit Community Cloud (it reads the requirements file next to the app first).
+# No torch here: on the cloud, embeddings come from the Gemini API to stay under the memory limit.
+pypdf>=4.2
+numpy>=1.26
+pydantic>=2.7
+python-dotenv>=1.0
+google-genai>=1.0
+streamlit>=1.36
+reportlab>=4.0

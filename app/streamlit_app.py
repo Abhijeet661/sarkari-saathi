@@ -18,12 +18,27 @@ from saathi.schemas import UserProfile  # noqa: E402
 st.set_page_config(page_title="Sarkari Saathi", page_icon="📄", layout="wide")
 
 
+SAMPLE_PDF = Path(__file__).resolve().parent.parent / "data" / "sample" / "sample_notification.pdf"
+
+
 @st.cache_resource(show_spinner="Loading models...")
 def load_saathi() -> Saathi:
-    return Saathi.from_settings()
+    saathi = Saathi.from_settings()
+    # so a first-time visitor can try it without hunting for a PDF
+    if not saathi.documents():
+        if not SAMPLE_PDF.exists():
+            from scripts.make_sample_pdf import build
+
+            build(SAMPLE_PDF)
+        saathi.ingest(SAMPLE_PDF)
+    return saathi
 
 
-saathi = load_saathi()
+try:
+    saathi = load_saathi()
+except ValueError as err:  # usually a missing GEMINI_API_KEY
+    st.error(f"Setup problem: {err}")
+    st.stop()
 
 st.title("Sarkari Saathi")
 st.caption("Ask anything about a government job notification. Answers come with page numbers so you can verify.")
