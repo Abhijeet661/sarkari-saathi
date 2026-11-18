@@ -6,7 +6,7 @@ class LLM(Protocol):
 
 
 class GeminiLLM:
-    def __init__(self, api_key: str, model: str = "gemini-2.5-flash", temperature: float = 0.1):
+    def __init__(self, api_key: str, model: str = "gemini-3.8-flash", temperature: float = 0.1):
         if not api_key:
             raise ValueError("GEMINI_API_KEY is missing. Copy .env.example to .env and add your key.")
         from google import genai

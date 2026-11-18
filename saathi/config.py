@@ -12,7 +12,7 @@ ROOT_DIR = Path(__file__).resolve().parent.parent
 @dataclass(frozen=True)
 class Settings:
     gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
-    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-2.5-flash")
+    gemini_model: str = os.getenv("GEMINI_MODEL", "gemini-3.8-flash")
     # "local" (sentence-transformers), "gemini" (API) or "auto"
     embedding_provider: str = os.getenv("EMBEDDING_PROVIDER", "auto")
     # multilingual model so Hindi / Marathi questions still match English text
