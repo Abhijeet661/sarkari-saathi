@@ -4,6 +4,8 @@ from typing import Protocol
 
 import numpy as np
 
+from .llm import with_retry
+
 
 class Embedder(Protocol):
     def embed(self, texts: list[str]) -> np.ndarray: ...
@@ -46,11 +48,12 @@ class GeminiEmbedder:
     def _embed(self, texts: list[str], task: str) -> np.ndarray:
         rows = []
         for i in range(0, len(texts), self.BATCH):
-            response = self.client.models.embed_content(
+            batch = texts[i:i + self.BATCH]
+            response = with_retry(lambda: self.client.models.embed_content(
                 model=self.model,
-                contents=texts[i:i + self.BATCH],
+                contents=batch,
                 config=self._types.EmbedContentConfig(task_type=task, output_dimensionality=self.dim),
-            )
+            ))
             rows.extend(e.values for e in response.embeddings)
         vectors = np.asarray(rows, dtype=np.float32)
         # vectors below the full 3072 dims come back un-normalised
